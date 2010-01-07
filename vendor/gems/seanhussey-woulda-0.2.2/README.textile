@@ -1,0 +1,86 @@
+h1. woulda
+
+Testing is love. Especially when done with "Shoulda":http://thoughtbot.com/projects/shoulda. Shoulda makes testing your Rails app pretty easy.
+
+There are tons of Rails plugins and gems out there. It should be easy to test your Rails app that uses these as well. That kind of support doesn't really belong in Shoulda itself, though.
+
+That's where Woulda comes in.
+
+h2. Installing
+
+It's available as a gem: <pre>gem install seanhussey-woulda --source http://gems.github.com</pre>
+
+Use it in a Rails app by placing in config/environments/test.rb:
+
+<pre>config.gem 'seanhussey-woulda', :lib => 'woulda', :source => 'http://gems.github.com'</pre>
+
+Woulda requires "shoulda":http://github.com/thoughtbot/shoulda/tree/master >= 2.0.0.
+
+h2. Included Macros
+
+<pre><code># acts_as_ferret
+class PostTest < Test::Unit::TestCase
+  should_act_as_ferret :title, :contents
+end
+
+# acts_as_list
+class NewsItemTest < Test::Unit::TestCase
+  should_act_as_list
+end
+
+# acts_as_paranoid
+class DocumentTest < Test::Unit::TestCase
+  should_act_as_paranoid
+end
+
+# acts_as_taggable_on_steroids
+class PersonTest < Test::Unit::TestCase
+  should_act_as_taggable_on_steroids
+end
+
+# attachment_fu
+class ImageTest < Test::Unit::TestCase
+  should_have_attachment :content_type => :image
+end
+
+# enumeration_mixin
+class RoleTest < Test::Unit::TestCase
+  should_act_as_enumerated
+end
+
+# paperclip
+class UserTest < Test::Unit::TestCase
+  should_have_attached_file :avatar
+end
+
+# will_paginate
+class PostTest < Test::Unit::TestCase
+  should_have_per_page 10
+end
+
+# acts_as_solr
+class ProductTest < Test::Unit::TestCase
+  should_act_as_solr :name, :price
+end
+
+# acts_as_xapian
+class ProductTest < Test::Unit::TestCase
+  should_act_as_xapian :name, :description
+end 
+
+# acts_as_state_machine
+class OrderTest < Test::Unit::TestCase
+  should_act_as_state_machine :initial => :open, :states => [:closed], :events => {:close_order => {:to => :closed, :from :open}}
+end</code></pre>
+
+h2. The source
+
+The source is available from "GitHub":http://github.com/seanhussey/woulda/tree/master.
+
+Clone it: <pre>git clone git://github.com/seanhussey/woulda.git</pre>
+
+h2. Credit
+
+Written by "Sean Hussey":mailto:sean@seanhussey.com and "Josh Nichols":http://technicalpickles.com
+
+Copyright 2008 Sean Hussey and Josh Nichols.
