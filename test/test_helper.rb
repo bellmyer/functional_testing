@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'test_help'
 
 class ActiveSupport::TestCase
-  include AuthentidatedTestHelper
+  include AuthenticatedTestHelper
 
   self.use_transactional_fixtures = true
 
