@@ -5,10 +5,6 @@ require 'sessions_controller'
 class SessionsController; def rescue_action(e) raise e end; end
 
 class SessionsControllerTest < ActionController::TestCase
-  # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead
-  # Then, you can remove it from this and the units test.
-  include AuthenticatedTestHelper
-
   fixtures :users
 
   def test_should_login_and_redirect
@@ -39,7 +35,6 @@ class SessionsControllerTest < ActionController::TestCase
   def test_should_not_remember_me
     @request.cookies["auth_token"] = nil
     post :create, :login => 'quentin', :password => 'monkey', :remember_me => "0"
-    puts @response.cookies["auth_token"]
     assert @response.cookies["auth_token"].blank?
   end
   
