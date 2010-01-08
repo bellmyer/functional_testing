@@ -3,6 +3,42 @@ require 'test_helper'
 class SettingsControllerTest < ActionController::TestCase
   fixtures :users, :roles, :roles_users
   
+  class << self
+    def should_display(template)
+      should_respond_with :success
+      should_render_with_layout :settings
+      should_render_template template
+      should_not_set_the_flash
+    end
+    
+    def should_not_authorize(action)
+      context "attempting to #{action}" do
+        setup do
+          eval action
+        end
+        
+        should_not_assign_to :settings
+        should_not_assign_to :setting
+        should_respond_with 401
+        should_render_without_layout
+        should_not_set_the_flash
+      end
+    end
+
+    def should_require_login_for(action)
+      context "attempting to #{action}" do
+        setup do
+          eval action
+        end
+
+        should_not_assign_to :settings
+        should_not_assign_to :setting
+        should_redirect_to("login"){new_session_path}
+        should_set_the_flash_to 'You need to login to do this.'
+      end
+    end
+  end
+
   context "as admin" do
     setup do
       @setting = Factory.build :setting
@@ -20,10 +56,7 @@ class SettingsControllerTest < ActionController::TestCase
       end
       
       should_assign_to(:settings){[@setting]}
-      should_respond_with :success
-      should_render_with_layout :settings
-      should_render_template :index
-      should_not_set_the_flash
+      should_display :index
     end
     
     context "getting show" do
@@ -32,10 +65,7 @@ class SettingsControllerTest < ActionController::TestCase
       end
       
       should_assign_to(:setting){@setting}
-      should_respond_with :success
-      should_render_with_layout :settings
-      should_render_template :show
-      should_not_set_the_flash
+      should_display :show
     end
     
     context "getting new" do
@@ -44,10 +74,7 @@ class SettingsControllerTest < ActionController::TestCase
       end
       
       should_assign_to :setting, :class => Setting
-      should_respond_with :success
-      should_render_with_layout :settings
-      should_render_template :new
-      should_not_set_the_flash
+      should_display :new
     end
     
     context "posting create" do
@@ -71,10 +98,7 @@ class SettingsControllerTest < ActionController::TestCase
         end
         
         should_assign_to :setting, :class => Setting
-        should_respond_with :success
-        should_render_with_layout :settings
-        should_render_template :new
-        should_not_set_the_flash
+        should_display :new
       end
     end
 
@@ -84,10 +108,7 @@ class SettingsControllerTest < ActionController::TestCase
       end
       
       should_assign_to(:setting){@setting}
-      should_respond_with :success
-      should_render_with_layout :settings
-      should_render_template :edit
-      should_not_set_the_flash
+      should_display :edit
     end
 
     context "updating" do
@@ -109,10 +130,7 @@ class SettingsControllerTest < ActionController::TestCase
         end
         
         should_assign_to :setting, :class => Setting
-        should_respond_with :success
-        should_render_with_layout :settings
-        should_render_template :edit
-        should_not_set_the_flash
+        should_display :edit
       end
     end
     
@@ -133,153 +151,22 @@ class SettingsControllerTest < ActionController::TestCase
       login_as :quentin
     end
     
-    context "attempting to get index" do
-      setup do
-        get :index
-      end
-      
-      should_not_assign_to :settings
-      should_respond_with 401
-      should_render_without_layout
-      should_not_set_the_flash
-    end
-
-    context "attempting to get show" do
-      setup do
-        get :show
-      end
-      
-      should_not_assign_to :setting
-      should_respond_with 401
-      should_render_without_layout
-      should_not_set_the_flash
-    end
-
-    context "attempting to get new" do
-      setup do
-        get :new
-      end
-      
-      should_not_assign_to :setting
-      should_respond_with 401
-      should_render_without_layout
-      should_not_set_the_flash
-    end
-
-    context "attempting to post create" do
-      setup do
-        post :create
-      end
-      
-      should_not_assign_to :setting
-      should_respond_with 401
-      should_render_without_layout
-      should_not_set_the_flash
-    end
-
-    context "attempting to get edit" do
-      setup do
-        get :edit
-      end
-      
-      should_not_assign_to :setting
-      should_respond_with 401
-      should_render_without_layout
-      should_not_set_the_flash
-    end
-
-    context "attempting to update" do
-      setup do
-        put :update
-      end
-      
-      should_not_assign_to :setting
-      should_respond_with 401
-      should_render_without_layout
-      should_not_set_the_flash
-    end
-
-    context "attempting to destroy" do
-      setup do
-        delete :destroy
-      end
-      
-      should_not_assign_to :setting
-      should_respond_with 401
-      should_render_without_layout
-      should_not_set_the_flash
-    end
+    should_not_authorize 'get :index'
+    should_not_authorize 'get :show'
+    should_not_authorize 'get :new'
+    should_not_authorize 'post :create'
+    should_not_authorize 'get :edit'
+    should_not_authorize 'put :update'
+    should_not_authorize 'delete :destroy'
   end
   
   context "as a visitor" do
-    context "attempting to get index" do
-      setup do
-        get :index
-      end
-      
-      should_not_assign_to :settings
-      should_redirect_to("login"){new_session_path}
-      should_set_the_flash_to 'You need to login to do this.'
-    end
-
-    context "attempting to get show" do
-      setup do
-        get :show
-      end
-      
-      should_not_assign_to :setting
-      should_redirect_to("login"){new_session_path}
-      should_set_the_flash_to 'You need to login to do this.'
-    end
-
-    context "attempting to get new" do
-      setup do
-        get :new
-      end
-      
-      should_not_assign_to :setting
-      should_redirect_to("login"){new_session_path}
-      should_set_the_flash_to 'You need to login to do this.'
-    end
-
-    context "attempting to post create" do
-      setup do
-        post :create
-      end
-      
-      should_not_assign_to :setting
-      should_redirect_to("login"){new_session_path}
-      should_set_the_flash_to 'You need to login to do this.'
-    end
-
-    context "attempting to get edit" do
-      setup do
-        get :edit
-      end
-      
-      should_not_assign_to :setting
-      should_redirect_to("login"){new_session_path}
-      should_set_the_flash_to 'You need to login to do this.'
-    end
-
-    context "attempting to update" do
-      setup do
-        put :update
-      end
-      
-      should_not_assign_to :setting
-      should_redirect_to("login"){new_session_path}
-      should_set_the_flash_to 'You need to login to do this.'
-    end
-
-    context "attempting to destroy" do
-      setup do
-        delete :destroy
-      end
-      
-      should_not_assign_to :setting
-      should_redirect_to("login"){new_session_path}
-      should_set_the_flash_to 'You need to login to do this.'
-    end
+    should_require_login_for 'get :index'
+    should_require_login_for 'get :show'
+    should_require_login_for 'get :new'
+    should_require_login_for 'post :create'
+    should_require_login_for 'get :edit'
+    should_require_login_for 'put :update'
+    should_require_login_for 'delete :destroy'
   end
 end
