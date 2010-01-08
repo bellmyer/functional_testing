@@ -1,15 +1,15 @@
 require 'test_helper'
 
-class SettingsControllerTest < ActionController::TestCase
+class PostsControllerTest < ActionController::TestCase
   fixtures :users, :roles, :roles_users
-  
+
   context "as admin" do
     setup do
-      @setting = Factory.build :setting
-      @setting.id = 1001
+      @post = Factory.build :post
+      @post.id = 1001
 
-      Setting.stubs(:find).returns(@setting)
-      Setting.stubs(:find).with(:all, anything).returns([@setting])
+      Post.stubs(:find).returns(@post)
+      Post.stubs(:find).with(:all, anything).returns([@post])
       
       login_as :admin
     end
@@ -19,16 +19,16 @@ class SettingsControllerTest < ActionController::TestCase
         get :index
       end
       
-      should_assign_to(:settings){[@setting]}
+      should_assign_to(:posts){[@post]}
       should_display :index
     end
     
     context "getting show" do
       setup do
-        get :show, :id => @setting.id
+        get :show, :id => @post.id
       end
       
-      should_assign_to(:setting){@setting}
+      should_assign_to(:post){@post}
       should_display :show
     end
     
@@ -37,75 +37,75 @@ class SettingsControllerTest < ActionController::TestCase
         get :new
       end
       
-      should_assign_to :setting, :class => Setting
+      should_assign_to :post, :class => Post
       should_display :new
     end
     
     context "posting create" do
       context "with valid data" do
         setup do
-          Setting.any_instance.expects(:save).returns(true).once
-          Setting.any_instance.stubs(:id).returns(1001)
+          Post.any_instance.expects(:save).returns(true).once
+          Post.any_instance.stubs(:id).returns(1001)
           
-          post :create, :setting => {}
+          post :create, :post => {}
         end
         
-        should_assign_to :setting, :class => Setting
-        should_redirect_to("setting page"){setting_path(1001)}
-        should_set_the_flash_to "Setting was successfully created."
+        should_assign_to :post, :class => Post
+        should_redirect_to("post page"){post_path(1001)}
+        should_set_the_flash_to "Post was successfully created."
       end
       
       context "with invalid data" do
         setup do
-          Setting.any_instance.expects(:save).returns(false).once
-          post :create, :setting => {}
+          Post.any_instance.expects(:save).returns(false).once
+          post :create, :post => {}
         end
         
-        should_assign_to :setting, :class => Setting
+        should_assign_to :post, :class => Post
         should_display :new
       end
     end
 
     context "getting edit" do
       setup do
-        get :edit, :id => @setting.id
+        get :edit, :id => @post.id
       end
       
-      should_assign_to(:setting){@setting}
+      should_assign_to(:post){@post}
       should_display :edit
     end
 
     context "updating" do
       context "with valid data" do
         setup do
-          @setting.expects(:update_attributes).returns(true).once
-          put :update, :id => @setting.id, :setting => {}
+          @post.expects(:update_attributes).returns(true).once
+          put :update, :id => @post.id, :post => {}
         end
         
-        should_assign_to(:setting){@setting}
-        should_redirect_to("setting page"){setting_path(1001)}
-        should_set_the_flash_to "Setting was successfully updated."
+        should_assign_to(:post){@post}
+        should_redirect_to("post page"){post_path(1001)}
+        should_set_the_flash_to "Post was successfully updated."
       end
       
       context "with invalid data" do
         setup do
-          @setting.expects(:update_attributes).returns(false).once
-          put :update, :id => @setting.id, :setting => {}
+          @post.expects(:update_attributes).returns(false).once
+          put :update, :id => @post.id, :post => {}
         end
         
-        should_assign_to :setting, :class => Setting
+        should_assign_to :post, :class => Post
         should_display :edit
       end
     end
     
     context "destroying" do
       setup do
-        @setting.expects(:destroy).once
-        delete :destroy, :id => @setting.id
+        @post.expects(:destroy).once
+        delete :destroy, :id => @post.id
       end
       
-      should_assign_to(:setting){@setting}
-      should_redirect_to("index"){settings_path}
+      should_assign_to(:post){@post}
+      should_redirect_to("index"){posts_path}
       should_not_set_the_flash
     end
   end
@@ -114,7 +114,7 @@ class SettingsControllerTest < ActionController::TestCase
     setup do
       login_as :quentin
     end
-
+    
     should_not_authorize 'get :index'
     should_not_authorize 'get :show'
     should_not_authorize 'get :new'
