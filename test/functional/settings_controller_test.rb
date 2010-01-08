@@ -5,8 +5,12 @@ class SettingsControllerTest < ActionController::TestCase
   
   context "as admin" do
     setup do
-      @valid = Factory.build(:setting).attributes
-      @setting = Factory :setting
+      @setting = Factory.build :setting
+      @setting.id = 1001
+
+      Setting.stubs(:find).returns(@setting)
+      Setting.stubs(:find).with(:all, anything).returns([@setting])
+      
       login_as :admin
     end
     
@@ -49,20 +53,20 @@ class SettingsControllerTest < ActionController::TestCase
     context "posting create" do
       context "with valid data" do
         setup do
-          post :create, :setting => @valid
+          Setting.any_instance.expects(:save).returns(true).once
+          Setting.any_instance.stubs(:id).returns(1001)
+          
+          post :create, :setting => {}
         end
         
         should_assign_to :setting, :class => Setting
-        should_redirect_to("setting page"){setting_path(assigns(:setting))}
+        should_redirect_to("setting page"){setting_path(1001)}
         should_set_the_flash_to "Setting was successfully created."
-        
-        should "create the record" do
-          assert Setting.find_by_name(@valid['name'])
-        end
       end
       
       context "with invalid data" do
         setup do
+          Setting.any_instance.expects(:save).returns(false).once
           post :create, :setting => {}
         end
         
@@ -89,22 +93,19 @@ class SettingsControllerTest < ActionController::TestCase
     context "updating" do
       context "with valid data" do
         setup do
-          put :update, :id => @setting.id, :setting => {:name => 'Bob'}
+          @setting.expects(:update_attributes).returns(true).once
+          put :update, :id => @setting.id, :setting => {}
         end
         
         should_assign_to(:setting){@setting}
-        should_redirect_to("setting page"){setting_path(assigns(:setting))}
+        should_redirect_to("setting page"){setting_path(1001)}
         should_set_the_flash_to "Setting was successfully updated."
-        
-        should "update the record" do
-          @setting.reload
-          assert_equal 'Bob', @setting.name
-        end
       end
       
       context "with invalid data" do
         setup do
-          put :update, :id => @setting.id, :setting => {:name => nil}
+          @setting.expects(:update_attributes).returns(false).once
+          put :update, :id => @setting.id, :setting => {}
         end
         
         should_assign_to :setting, :class => Setting
@@ -117,16 +118,13 @@ class SettingsControllerTest < ActionController::TestCase
     
     context "destroying" do
       setup do
+        @setting.expects(:destroy).once
         delete :destroy, :id => @setting.id
       end
       
       should_assign_to(:setting){@setting}
       should_redirect_to("index"){settings_path}
       should_not_set_the_flash
-      
-      should "delete the record" do
-        assert !Setting.find_by_id(@setting.id)
-      end
     end
   end
   

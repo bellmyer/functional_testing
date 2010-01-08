@@ -31,3 +31,4 @@ config.gem 'thoughtbot-factory_girl', :lib => 'factory_girl', :source => 'http:/
 config.gem 'thoughtbot-shoulda',      :lib => 'shoulda',      :source => 'http://gems.github.com'
 config.gem 'seanhussey-woulda',       :lib => 'woulda',       :source => 'http://gems.github.com'
 config.gem 'redgreen'
+config.gem 'mocha'

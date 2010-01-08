@@ -23,7 +23,7 @@ class SettingsController < ApplicationController
 
     if @setting.save
       flash[:notice] = 'Setting was successfully created.'
-      redirect_to(@setting)
+      redirect_to setting_path(@setting)
     else
       render :action => "new"
     end
@@ -34,7 +34,7 @@ class SettingsController < ApplicationController
 
     if @setting.update_attributes(params[:setting])
       flash[:notice] = 'Setting was successfully updated.'
-      redirect_to(@setting)
+      redirect_to setting_path(@setting)
     else
       render :action => "edit"
     end
