@@ -115,22 +115,10 @@ class SettingsControllerTest < ActionController::TestCase
       login_as :quentin
     end
 
-    should_not_authorize 'get :index'
-    should_not_authorize 'get :show'
-    should_not_authorize 'get :new'
-    should_not_authorize 'post :create'
-    should_not_authorize 'get :edit'
-    should_not_authorize 'put :update'
-    should_not_authorize 'delete :destroy'
+    should_not_authorize :all
   end
   
   context "as a visitor" do
-    should_require_login_for 'get :index'
-    should_require_login_for 'get :show'
-    should_require_login_for 'get :new'
-    should_require_login_for 'post :create'
-    should_require_login_for 'get :edit'
-    should_require_login_for 'put :update'
-    should_require_login_for 'delete :destroy'
+    should_require_login_for :all
   end
 end
